@@ -27,17 +27,41 @@ def process_receipt(request):
 
     receipt = request.json
 
+    receipt['points'] = __score_points(receipt=receipt)
+
     id = str(uuid.uuid4())
 
-    in_mem_db[id] = receipt
+    in_mem_db["hi"] = receipt
 
     return { "id": id }
 
 def get_points(id):
-    return { "points": in_mem_db[id] }
+    return { "points": in_mem_db[id]['points'] }
 
 def __score_points(receipt):
-    pass
+    total = 0
+    total +=  __score_retailer_points(receipt)
+    total +=  __score_dollar_amount(receipt)
+    total += __score_item_counts(receipt)
+    return total
+
+def __score_retailer_points(receipt):
+    return len(receipt["retailer"])
+
+def __score_dollar_amount(receipt):
+    score = 0
+    if float(receipt['total']) % 1.00 == 0:
+        score += 50
+    if float(receipt['total']) % 0.25 == 0:
+        score += 25
+    return score
+    
+def __score_item_counts(receipt):
+    score = 0
+    score =+ len(receipt['items']) // 2 * 5
+    return score
+    
+     
 
 def validateJSON(jsonData):
     try:
