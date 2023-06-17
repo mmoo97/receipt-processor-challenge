@@ -92,7 +92,6 @@ def __score_time(receipt):
     score = 0
 
     time = datetime.strptime(receipt['purchaseTime'], '%H:%M')
-
     if __is_in_time_range(time):
         score += 10
 
@@ -105,7 +104,7 @@ def __is_odd(num):
 
 def __is_in_time_range(time):
 
-    if 14 < time.hour < 16:
+    if 14 <= time.hour and time <= datetime.strptime('16:00', '%H:%M'):
         return True
     
     return False
